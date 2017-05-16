@@ -1,0 +1,6 @@
+---
+- name: source export
+  command: source /etc/profile.d/hadoop_export.sh
+
+- name: start HDFS and YARN
+  shell: /opt/hadoop/{{ hadoop_bin_source }}/sbin/start-all.sh

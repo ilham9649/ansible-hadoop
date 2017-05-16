@@ -1,0 +1,44 @@
+---
+- name: Create folder hadoop
+  file:
+    path=/opt/hadoop
+    mode=0755
+    recurse=yes
+
+- name:	Extracting hadoop 
+  unarchive: 
+    src={{ hadoop_bin_source }}
+    dest=/opt/hadoop/
+    mode=0755  
+    copy=yes
+  register: copy_to_all
+
+- name:	Configure hadoop 
+  template:
+    src={{ item }}
+    dest=/opt/hadoop/{{ hadoop_bin_source[-19:-7] }}/etc/hadoop
+  with_items:
+    - yarn-site.xml
+    - hdfs-site.xml
+    - core-site.xml
+
+- name: Create folder for datanode volume
+  file:
+    path=/opt/volume/
+    state=directory
+    mode=0666
+
+- name:	Update profile.d
+  template:	
+    src=hadoop_export.sh
+    dest=/etc/profile.d/
+  notify: 
+    - source export
+    - format namenode
+  when: copy_to_all|success
+  register: export_hadoop
+
+- name: format namenode
+  when: export_hadoop|success
+  command: hdfs namenode -format
+
