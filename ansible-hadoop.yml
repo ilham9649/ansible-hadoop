@@ -1,0 +1,10 @@
+---
+- name: hadoop playbook
+  hosts: all
+  become_method: sudo
+  become: true
+  gather_facts: false
+  roles:
+    - { role: 'hadoop', hadoop_bin_source: ~/hadoop-2.8.0.tar.gz, master_hostname: master, fs_port: 8020}
+
+
